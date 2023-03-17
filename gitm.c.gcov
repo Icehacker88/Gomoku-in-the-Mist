@@ -1,0 +1,255 @@
+        -:    0:Source:gitm.c
+        -:    0:Graph:gitm.gcno
+        -:    0:Data:gitm.gcda
+        -:    0:Runs:30
+        -:    0:Programs:1
+        -:    0:Source is newer than graph
+        -:    1:// name: Haochen Shen
+        -:    2:// unikey: hshe8202
+        -:    3:// SID: 500021480
+        -:    4:
+        -:    5:// code here
+        -:    6:#include <stdio.h>
+        -:    7:#include <string.h>
+        -:    8:#include <ctype.h>
+        -:    9:
+        -:   10:#define black '#'
+        -:   11:#define white 'o'
+        -:   12:#define off_board 'x'
+        -:   13:#define empty '.'
+        -:   14:#define board_size 19
+        -:   15:#define max_long 16384
+        -:   16:#define win_situation 5
+        -:   17:
+        -:   18:// define a board with 19*19
+        -:   19:char board[board_size][board_size];
+        -:   20:// define actions history
+        -:   21:char history[max_long] = "";
+        -:   22:// initialize the go board
+       30:   23:void initialize_board() {
+      600:   24:    for (int i = 0; i < board_size; i++) {
+    11400:   25:        for (int j = 0; j < board_size; j++) {
+    10830:   26:            board[i][j] = empty;
+        -:   27:        }
+        -:   28:    }
+       30:   29:}
+        -:   30:// end game print
+        8:   31:void EndGame(char e) {
+        8:   32:    if (e == black) {
+        5:   33:        printf("Black wins!\n");
+        5:   34:        printf("%s\n", history);
+        5:   35:        printf("Thank you for playing!\n");
+        -:   36:    }
+        3:   37:    else if (e == white) {
+        3:   38:        printf("White wins!\n");
+        3:   39:        printf("%s\n", history);
+        3:   40:        printf("Thank you for playing!\n");
+        -:   41:    }
+        8:   42:}
+        -:   43:
+       30:   44:int main() {
+       30:   45:    int nx = 10; // initial x-coordinate mist hole centre
+       30:   46:    int ny = 10; // initial y-coordinate mist hole centre
+        -:   47:    char current_player;
+        -:   48:    char command[max_long];
+        -:   49:    char position[max_long]; // the coordinates of each placing
+        -:   50:    // position reference array
+       30:   51:    char p[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
+       30:   52:    int round = 1;
+        -:   53:    int c; // a number to judge if command "place " is correct
+       30:   54:    initialize_board();
+        -:   55:    // the game is on
+     1231:   56:    while(1) {
+        -:   57:        // check if win
+    25219:   58:        for (int row = 0; row<board_size; row++) { // check each row
+   383329:   59:            for (int col = 0; col<board_size-win_situation+1; col++) {
+   558281:   60:                if (board[row][col] == board[row][col+1] &&
+   397690:   61:                    board[row][col] == board[row][col+2] &&
+   397502:   62:                    board[row][col] == board[row][col+win_situation-2] &&
+   198722:   63:                    board[row][col] == board[row][col+win_situation-1]) {
+   198705:   64:                    if (board[row][col] == black || board[row][col] == white) {
+        1:   65:                        EndGame(board[row][col]);
+        1:   66:                        return 0;
+        -:   67:                    }
+        -:   68:                }
+        -:   69:            }
+        -:   70:        }
+    25181:   71:        for (int col = 0; col<board_size; col++) { // check each column
+   382751:   72:            for (int row = 0; row<board_size-win_situation+1; row++) {
+   659578:   73:                if (board[row][col] == board[row+1][col] &&
+   539346:   74:                    board[row][col] == board[row+2][col] &&
+   434825:   75:                    board[row][col] == board[row+win_situation-2][col] &&
+   196227:   76:                    board[row][col] == board[row+win_situation-1][col]) {
+   171360:   77:                    if (board[row][col] == black || board[row][col] == white) {
+        1:   78:                        EndGame(board[row][col]);
+        1:   79:                        return 0;
+        -:   80:                    }
+        -:   81:                }
+        -:   82:            }
+        -:   83:        }
+    20099:   84:        for (int row = 0; row<board_size-win_situation+1; row++) { // check left diagonal
+   301443:   85:            for (int col = 0; col<board_size-win_situation+1; col++) {
+   486991:   86:                if (board[row][col] == board[row+1][col+1] &&
+   363493:   87:                    board[row][col] == board[row+2][col+2] &&
+   306824:   88:                    board[row][col] == board[row+win_situation-2][col+win_situation-2] &&
+   147719:   89:                    board[row][col] == board[row+win_situation-1][col+win_situation-1]) {
+   137807:   90:                    if (board[row][col] == black || board[row][col] == white) {
+        3:   91:                        EndGame(board[row][col]);
+        3:   92:                        return 0;
+        -:   93:                    }
+        -:   94:                }
+        -:   95:            }
+        -:   96:        }
+    20096:   97:        for (int row = 0; row<board_size-win_situation+1; row++) { // check right diagonal
+   301440:   98:            for (int col = board_size-1; col>win_situation-2; col--) {
+   489124:   99:                if (board[row][col] == board[row+1][col-1] &&
+   366687:  100:                    board[row][col] == board[row+2][col-2] &&
+   301383:  101:                    board[row][col] == board[row+win_situation-2][col-(win_situation-2)] &&
+   141220:  102:                    board[row][col] == board[row+win_situation-1][col-(win_situation-1)]) {
+   129909:  103:                    if (board[row][col] == black || board[row][col] == white) {
+    #####:  104:                        EndGame(board[row][col]);
+    #####:  105:                        return 0;
+        -:  106:                    }
+        -:  107:                }
+        -:  108:            }
+        -:  109:        }
+        -:  110:        // check if tie
+     1256:  111:        int e = 1;
+     2566:  112:        for (int i = 0; i < board_size; i++) {
+     2563:  113:            if (e == 0) {
+     1253:  114:                break;
+        -:  115:            }
+     3246:  116:            for (int j = 0; j < board_size; j++) {
+     3189:  117:                if (board[i][j] == empty) {
+     1253:  118:                    e = 0;
+     1253:  119:                    break;
+        -:  120:                }
+        -:  121:            }
+        -:  122:        }
+     1256:  123:        if (e == 1) {
+        3:  124:            printf("Wow, a tie!\n");
+        3:  125:            printf("%s\n", history);
+        3:  126:            printf("Thank you for playing!\n");
+        3:  127:            return 0;
+        -:  128:        }
+        -:  129:        // input the command
+     1253:  130:        fgets(command, max_long, stdin);
+     1253:  131:        size_t len = strcspn(command, "\n"); // find the LF
+     1253:  132:        if (len < strlen(command)) {
+     1253:  133:            command[len] = '\0'; // Replaces a LF with an end-of-string symbol
+        -:  134:        }
+     1253:  135:        c = strncmp(command, "place ", 6); // get the string "place " to compare with command. 6 is 6 characters of "place "
+        -:  136:        // check the current player
+     1253:  137:        if (round % 2 == 1) {
+      642:  138:            current_player = 'B';
+        -:  139:        }
+        -:  140:        else{
+      611:  141:            current_player = 'W';
+        -:  142:        }
+        -:  143:        // if command is "who"
+     1253:  144:        if (strcmp(command, "who") == 0) {
+        7:  145:            if (current_player == 'B') {
+        5:  146:                printf("B\n");
+        -:  147:            }
+        -:  148:            else{
+        2:  149:                printf("W\n");
+        -:  150:            }
+        -:  151:        }
+        -:  152:        // if command is "resign"
+     1246:  153:        else if (strcmp(command, "resign") == 0) {
+        3:  154:            round += 1;
+        -:  155:            // check who resigned
+        3:  156:            if (round % 2 == 1) {
+        2:  157:                EndGame(black);
+        2:  158:                return 0;
+        -:  159:            }
+        -:  160:            else {
+        1:  161:                EndGame(white);
+        1:  162:                return 0;
+        -:  163:            }
+        -:  164:        }
+        -:  165:        // if command is "view"
+     1243:  166:        else if (strcmp(command, "view") == 0) {
+        6:  167:            printf("%c%d,",p[nx-1], ny);
+        -:  168:            // print the mist hole
+       48:  169:            for (int i = -3; i<4; i++) { // the mist hole is 7*7, so, I choose the square which is from mist_centre-3 to mist_centre+3
+      336:  170:                for (int j = -3; j<4; j++) {
+        -:  171:                    // check if on the board
+      294:  172:                    if (nx+j>board_size || nx+j<1 || board_size+1-ny+i>board_size || board_size+1-ny+i<1) {
+       57:  173:                        printf("%c", off_board);
+        -:  174:                    }
+        -:  175:                    else {
+      237:  176:                        printf("%c", board[board_size-ny+i][nx-1+j]);
+        -:  177:                    }
+        -:  178:                }
+        -:  179:            }
+        6:  180:            printf("\n");
+        -:  181:        }
+        -:  182:        // if command is "place <C><R>"
+     1237:  183:        else if (c == 0) {
+        -:  184:            // check the format whether valid
+     1206:  185:            int count = 0;
+    11488:  186:            for (int i = 0; i<len; i++) { // check how many spaces in command, only one space is allowed
+    10282:  187:                if (command[i] == ' ') {
+     1206:  188:                    count += 1;
+        -:  189:                }
+        -:  190:            }
+     1206:  191:            if (sscanf(command, "%*s %s", position)!=1 || isspace(command[6]) || command[len-1]==' ' || count>1) { // the sixth character can't be space
+    #####:  192:                printf("Invalid!\n");
+    #####:  193:                continue;
+        -:  194:            }
+        -:  195:            // get y position
+        -:  196:            int x;
+     1206:  197:            int y = 0;
+     3046:  198:            for (int i = 1; i<strlen(position); i++) {
+     1840:  199:                y = y*10 + (position[i] - '0'); // make the char to the int number
+        -:  200:            }
+        -:  201:            // change to numeric coordinates
+    11325:  202:            for (x = 1; x<board_size+1; x++) {
+    11315:  203:                if (p[x-1] == position[0]) {
+     1202:  204:                    if (y<board_size+1 && y>0) {
+     1196:  205:                        break;
+        -:  206:                    }
+        -:  207:                }
+        -:  208:            }
+        -:  209:            // check if the coordinates is on board
+     1206:  210:            if (x==board_size+1 || y>board_size || y<1 || command[7]=='0') { // the seventh character can't be 0
+       12:  211:                printf("Invalid coordinate\n");
+       12:  212:                continue;
+        -:  213:            }
+        -:  214:            // check if occupied
+     1194:  215:            else if (board[board_size-y][x-1] != empty) {
+        1:  216:                printf("Occupied coordinate\n");
+        1:  217:                continue;
+        -:  218:            }
+        -:  219:            else {
+     1193:  220:                round += 1;
+        -:  221:            }
+        -:  222:            // update board state
+     1193:  223:            if (current_player == 'B') {
+      605:  224:                board[board_size-y][x-1] = black;
+        -:  225:            }
+        -:  226:            else{
+      588:  227:                board[board_size-y][x-1] = white;
+        -:  228:            }
+        -:  229:            // get the centre coordinates of mist hole
+     1193:  230:            nx = 1 + (5*x*x + 3*x + 4) % 19;
+     1193:  231:            ny = 1 + (4*y*y + 2*y - 4) % 19;
+        -:  232:            // put this action into history
+     1193:  233:            strcat(history, position);
+        -:  234:        }
+        -:  235:        // if command is "history"
+       31:  236:        else if (strcmp(command, "history") == 0) {
+        3:  237:            printf("%s\n", history);
+        -:  238:        }
+        -:  239:        // if command is "term"
+       28:  240:        else if (strcmp(command, "term") == 0){
+       19:  241:            return 1;
+        -:  242:        }
+        -:  243:        // the command is invalid
+        -:  244:        else {
+        9:  245:            printf("Invalid!\n");
+        9:  246:            continue;
+        -:  247:        }
+        -:  248:    }
+        -:  249:}
